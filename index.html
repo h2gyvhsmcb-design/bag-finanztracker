@@ -8,22 +8,11 @@
   <title>BAG – Finanztracker</title>
   <style>
     :root{
-      --bg:#0f172a;/* slate-900 */
-      --panel:#111827;/* gray-900 */
-      --panel-2:#0b1220;/* darker */
-      --text:#e5e7eb;/* gray-200 */
-      --muted:#9ca3af;/* gray-400 */
-      --accent:#60a5fa;/* blue-400 */
-      --ok:#34d399;/* emerald */
-      --bad:#f87171;/* red */
-      --warn:#fbbf24;/* amber */
-      --card:#111827; --border:#1f2937;
+      --bg:#0f172a;--panel:#111827;--panel-2:#0b1220;--text:#e5e7eb;--muted:#9ca3af;--accent:#60a5fa;--ok:#34d399;--bad:#f87171;--warn:#fbbf24;--card:#111827;--border:#1f2937;
     }
-    [data-theme="light"]{
-      --bg:#f8fafc; --panel:#ffffff; --panel-2:#f1f5f9; --text:#0f172a; --muted:#475569; --accent:#2563eb; --ok:#059669; --bad:#dc2626; --warn:#d97706; --card:#ffffff; --border:#e5e7eb;
-    }
+    [data-theme="light"]{--bg:#f8fafc;--panel:#fff;--panel-2:#f1f5f9;--text:#0f172a;--muted:#475569;--accent:#2563eb;--ok:#059669;--bad:#dc2626;--warn:#d97706;--card:#fff;--border:#e5e7eb}
     *{box-sizing:border-box}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; background:var(--bg); color:var(--text)}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);color:var(--text)}
     header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--panel)}
     .tabs{display:flex;gap:8px;flex-wrap:wrap}
     .tab{padding:8px 12px;border:1px solid var(--border);border-radius:10px;background:var(--panel-2);cursor:pointer}
@@ -48,25 +37,30 @@
     .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     canvas{width:100%;height:320px;display:block}
     .footer{padding:18px 0;color:var(--muted);font-size:12px}
-    .switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
     @media (max-width:720px){
       :root{ --touchPad:16px }
-      body{padding-bottom:env(safe-area-inset-bottom);}
+      body{padding-bottom:env(safe-area-inset-bottom)}
       .wrap{max-width:430px;padding:12px}
       .grid{grid-template-columns:1fr}
       .kpis{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
-      header{position:sticky;top:0;z-index:10;padding-top:calc(14px + env(safe-area-inset-top));}
+      header{position:sticky;top:0;z-index:10;padding-top:calc(14px + env(safe-area-inset-top))}
       .tabs{overflow:auto;-webkit-overflow-scrolling:touch}
       .tab{flex:0 0 auto}
       input,select,button,textarea{width:100%;min-height:44px}
       canvas{height:clamp(220px,40vh,360px)}
     }
+    .switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
   </style>
 </head>
 <body>
   <header>
-    <div class="row"><strong>BAG</strong><span class="pill" id="today"></span></div>
-    <div class="row"><label class="switch"><input type="checkbox" id="themeToggle"> <span>Hell/Dunkel</span></label></div>
+    <div class="row">
+      <strong>BAG</strong>
+      <span class="pill" id="today"></span>
+    </div>
+    <div class="row">
+      <label class="switch"><input type="checkbox" id="themeToggle"> <span>Hell/Dunkel</span></label>
+    </div>
   </header>
 
   <div class="wrap">
@@ -86,7 +80,8 @@
         <div class="card kpi"><h3>Tagesgeld</h3><div class="v" id="kpi-savings">0,00 €</div></div>
         <div class="card kpi"><h3>Aktien</h3><div class="v" id="kpi-stocks">0,00 €</div></div>
         <div class="card kpi"><h3>Krypto</h3><div class="v" id="kpi-crypto">0,00 €</div></div>
-        <div class="card kpi"><h3>Kosten (Monat)</h3><div class="v" id="kpi-costs">0,00 €</div></div>
+        <div class="card kpi"><h3>Ausgaben (Monat)</h3><div class="v" id="kpi-exp">0,00 €</div></div>
+        <div class="card kpi"><h3>Fixkosten (Monat)</h3><div class="v" id="kpi-fixed">0,00 €</div></div>
         <div class="card kpi"><h3>Ausgaben (gezahlt)</h3><div class="v" id="kpi-paid">0,00 €</div></div>
       </div>
       <div class="card" style="grid-column:1/-1">
@@ -107,7 +102,7 @@
       </div>
     </section>
 
-    <!-- ASSETS (Cash & Tagesgeld) -->
+    <!-- ASSETS -->
     <section class="grid" id="assets" style="display:none">
       <div class="card" style="grid-column:1/-1">
         <div class="section-title">Geldkonten</div>
@@ -124,7 +119,7 @@
       </div>
     </section>
 
-    <!-- MARKETS (Aktien / Krypto) -->
+    <!-- MARKETS -->
     <section class="grid" id="markets" style="display:none">
       <div class="card" style="grid-column:1/-1">
         <div class="section-title">Aktien & Krypto (manuell)</div>
@@ -141,7 +136,7 @@
       </div>
     </section>
 
-    <!-- COSTS (Kosten / Fixkosten / Einnahmen) -->
+    <!-- COSTS -->
     <section class="grid" id="costs" style="display:none">
       <div class="card" style="grid-column:1/-1">
         <div class="section-title">Ausgaben & Einnahmen</div>
@@ -174,190 +169,211 @@
           <input type="file" id="fileImport" accept="application/json">
           <button id="btnWipe" class="ghost" style="margin-left:auto;color:var(--bad)">Alles löschen</button>
         </div>
+        <div class="section-title" style="margin-top:16px">Cloud Sync (Google)</div>
+        <div class="row">
+          <button id="btnLogin" class="action">Mit Google anmelden</button>
+          <button id="btnLogout" class="ghost">Abmelden</button>
+          <span id="cloudStatus" class="pill">offline</span>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button id="btnCloudSave" class="ghost">In Cloud speichern</button>
+          <button id="btnCloudLoad" class="ghost">Aus Cloud laden</button>
+          <label class="switch"><input type="checkbox" id="autoSyncToggle"> Auto‑Sync</label>
+        </div>
       </div>
     </section>
 
-    <div class="footer">Alle Daten werden nur lokal im Browser (localStorage) gespeichert. Kein Login, kein Server. – Installiere als App: Safari → Teilen → „Zum Home‑Bildschirm“.</div>
+    <div class="footer">Alle Daten werden nur lokal im Browser (localStorage) gespeichert. Kein Login, kein Server.</div>
   </div>
 
   <script>
+  // ---------- State & Helpers ----------
   const SKEY = 'finanztracker.v1';
   const state = load() || { assets: [], markets: [], moves: [], snapshots: [] };
   const euro = v => (v||0).toLocaleString('de-DE',{style:'currency',currency:'EUR'});
-  const id = () => Math.random().toString(36).slice(2,9);
+  const genId = () => Math.random().toString(36).slice(2,9);
   const today = new Date();
   document.getElementById('today').textContent = new Intl.DateTimeFormat('de-DE',{dateStyle:'medium'}).format(today);
   function save(){ localStorage.setItem(SKEY, JSON.stringify(state)); }
   function load(){ try{ return JSON.parse(localStorage.getItem(SKEY)||''); }catch(e){ return null; } }
 
   // Theme
-  (function(){
+  (function theme(){
     const key='ft.theme';
     const saved = localStorage.getItem(key) || (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
     document.documentElement.setAttribute('data-theme', saved);
     const tgl=document.getElementById('themeToggle'); tgl.checked = saved==='light';
-    tgl.addEventListener('change',()=>{
-      const v = tgl.checked?'light':'dark';
-      document.documentElement.setAttribute('data-theme', v);
-      localStorage.setItem(key, v);
-      drawChart();
-    });
+    tgl.addEventListener('change',()=>{ const v = tgl.checked?'light':'dark'; document.documentElement.setAttribute('data-theme', v); localStorage.setItem(key, v); drawChart(); });
   })();
 
-  // Tabs
+  // Tabs (fix: saubere Klammern & kein Namenskonflikt)
   document.querySelectorAll('#tabs .tab').forEach(t=>{
     t.onclick=()=>{
       document.querySelectorAll('#tabs .tab').forEach(x=>x.classList.remove('active'));
       t.classList.add('active');
-      const which=t.dataset.tab; ['dashboard','assets','markets','costs','settings'].forEach(id=>{
-        document.getElementById(id).style.display = (id===which)?'grid':'none';
+      const which=t.dataset.tab;
+      ['dashboard','assets','markets','costs','settings'].forEach(sec=>{
+        document.getElementById(sec).style.display = (sec===which)?'grid':'none';
       });
       drawChart();
-    }
+    };
   });
 
-  // Assets
-  const formAsset = document.getElementById('formAsset');
-  formAsset.onsubmit = (e)=>{
-    e.preventDefault(); const f=new FormData(formAsset); const rec={ id: f.get('id') || id(), type:f.get('type'), label:f.get('label').trim(), amount: +f.get('amount'), tracked:true };
-    const ix = state.assets.findIndex(x=>x.id===rec.id);
-    if(ix>=0) state.assets[ix]=rec; else state.assets.push(rec);
-    save(); formAsset.reset(); renderAssets(); renderKPIs(); drawChart();
-  };
-  function renderAssets(){ const tbody=document.querySelector('#tblAssets tbody'); tbody.innerHTML='';
-    state.assets.forEach(a=>{ const tr=document.createElement('tr'); if(!a.tracked) tr.classList.add('excluded');
-      tr.innerHTML=`<td>${a.type==='cash'?'Geld':'Tagesgeld'}</td><td>${a.label}</td><td>${euro(a.amount)}</td>
-        <td><input type="checkbox" ${a.tracked?'checked':''}></td>
-        <td class="right"><button class="ghost edit">Bearbeiten</button><button class="ghost del" style="color:var(--bad)">Löschen</button></td>`;
-      tr.querySelector('input').onchange=()=>{ a.tracked=!a.tracked; save(); renderKPIs(); drawChart(); tr.classList.toggle('excluded',!a.tracked); };
-      tr.querySelector('.edit').onclick=()=>{ formAsset.type.value=a.type; formAsset.label.value=a.label; formAsset.amount.value=a.amount; formAsset.id.value=a.id; };
-      tr.querySelector('.del').onclick=()=>{ state.assets=state.assets.filter(x=>x.id!==a.id); save(); renderAssets(); renderKPIs(); drawChart(); };
-      tbody.appendChild(tr);
-    }); }
+  // Forms & Tables
+  const formAsset=document.getElementById('formAsset');
+  formAsset.onsubmit=(e)=>{ e.preventDefault(); const f=new FormData(formAsset); const rec={ id:f.get('id')||genId(), type:f.get('type'), label:f.get('label').trim(), amount:+f.get('amount'), tracked:true }; const ix=state.assets.findIndex(x=>x.id===rec.id); if(ix>=0) state.assets[ix]=rec; else state.assets.push(rec); save(); formAsset.reset(); renderAssets(); renderKPIs(); drawChart(); };
+  function renderAssets(){ const tbody=document.querySelector('#tblAssets tbody'); tbody.innerHTML=''; state.assets.forEach(a=>{ const tr=document.createElement('tr'); if(!a.tracked) tr.classList.add('excluded'); tr.innerHTML=`<td>${a.type==='cash'?'Geld':'Tagesgeld'}</td><td>${a.label}</td><td>${euro(a.amount)}</td><td><input type="checkbox" ${a.tracked?'checked':''}></td><td class="right"><button class="ghost edit">Bearbeiten</button><button class="ghost del" style="color:var(--bad)">Löschen</button></td>`; tr.querySelector('input').onchange=()=>{ a.tracked=!a.tracked; save(); renderKPIs(); drawChart(); tr.classList.toggle('excluded',!a.tracked); }; tr.querySelector('.edit').onclick=()=>{ formAsset.type.value=a.type; formAsset.label.value=a.label; formAsset.amount.value=a.amount; formAsset.id.value=a.id; }; tr.querySelector('.del').onclick=()=>{ state.assets=state.assets.filter(x=>x.id!==a.id); save(); renderAssets(); renderKPIs(); drawChart(); }; tbody.appendChild(tr); }); }
 
-  // Markets
-  const formMarket = document.getElementById('formMarket');
-  formMarket.onsubmit = (e)=>{
-    e.preventDefault(); const f=new FormData(formMarket); const rec={ id: f.get('id') || id(), type:f.get('type'), label:f.get('label').trim(), amount:+f.get('amount'), tracked:true };
-    const ix = state.markets.findIndex(x=>x.id===rec.id);
-    if(ix>=0) state.markets[ix]=rec; else state.markets.push(rec);
-    save(); formMarket.reset(); renderMarkets(); renderKPIs(); drawChart();
-  };
-  function renderMarkets(){ const tbody=document.querySelector('#tblMarkets tbody'); tbody.innerHTML='';
-    state.markets.forEach(a=>{ const tr=document.createElement('tr'); if(!a.tracked) tr.classList.add('excluded');
-      tr.innerHTML=`<td>${a.type==='stocks'?'Aktien':'Krypto'}</td><td>${a.label}</td><td>${euro(a.amount)}</td>
-        <td><input type="checkbox" ${a.tracked?'checked':''}></td>
-        <td class="right"><button class="ghost edit">Bearbeiten</button><button class="ghost del" style="color:var(--bad)">Löschen</button></td>`;
-      tr.querySelector('input').onchange=()=>{ a.tracked=!a.tracked; save(); renderKPIs(); drawChart(); tr.classList.toggle('excluded',!a.tracked); };
-      tr.querySelector('.edit').onclick=()=>{ formMarket.type.value=a.type; formMarket.label.value=a.label; formMarket.amount.value=a.amount; formMarket.id.value=a.id; };
-      tr.querySelector('.del').onclick=()=>{ state.markets=state.markets.filter(x=>x.id!==a.id); save(); renderMarkets(); renderKPIs(); drawChart(); };
-      tbody.appendChild(tr);
-    }); }
+  const formMarket=document.getElementById('formMarket');
+  formMarket.onsubmit=(e)=>{ e.preventDefault(); const f=new FormData(formMarket); const rec={ id:f.get('id')||genId(), type:f.get('type'), label:f.get('label').trim(), amount:+f.get('amount'), tracked:true }; const ix=state.markets.findIndex(x=>x.id===rec.id); if(ix>=0) state.markets[ix]=rec; else state.markets.push(rec); save(); formMarket.reset(); renderMarkets(); renderKPIs(); drawChart(); };
+  function renderMarkets(){ const tbody=document.querySelector('#tblMarkets tbody'); tbody.innerHTML=''; state.markets.forEach(a=>{ const tr=document.createElement('tr'); if(!a.tracked) tr.classList.add('excluded'); tr.innerHTML=`<td>${a.type==='stocks'?'Aktien':'Krypto'}</td><td>${a.label}</td><td>${euro(a.amount)}</td><td><input type="checkbox" ${a.tracked?'checked':''}></td><td class="right"><button class="ghost edit">Bearbeiten</button><button class="ghost del" style="color:var(--bad)">Löschen</button></td>`; tr.querySelector('input').onchange=()=>{ a.tracked=!a.tracked; save(); renderKPIs(); drawChart(); tr.classList.toggle('excluded',!a.tracked); }; tr.querySelector('.edit').onclick=()=>{ formMarket.type.value=a.type; formMarket.label.value=a.label; formMarket.amount.value=a.amount; formMarket.id.value=a.id; }; tr.querySelector('.del').onclick=()=>{ state.markets=state.markets.filter(x=>x.id!==a.id); save(); renderMarkets(); renderKPIs(); drawChart(); }; tbody.appendChild(tr); }); }
 
-  // Costs
-  const formCost = document.getElementById('formCost');
-  formCost.date.value = new Date().toISOString().slice(0,10);
-  formCost.onsubmit = (e)=>{
-    e.preventDefault(); const f=new FormData(formCost); const rec={ id: f.get('id') || id(), kind:f.get('kind'), label:f.get('label').trim(), amount:+f.get('amount'), date:f.get('date'), paid: !!f.get('paid'), tracked:true };
-    const ix = state.moves.findIndex(x=>x.id===rec.id);
-    if(ix>=0) state.moves[ix]=rec; else state.moves.push(rec);
-    save(); formCost.reset(); formCost.date.value = new Date().toISOString().slice(0,10); renderMoves(); renderKPIs(); drawChart();
-  };
-  const fltMonth = document.getElementById('fltMonth');
-  fltMonth.value = new Date().toISOString().slice(0,7);
-  document.getElementById('fltOnlyPaid').onchange=renderMoves;
-  document.getElementById('btnClearFilters').onclick=()=>{ document.getElementById('fltOnlyPaid').checked=false; fltMonth.value=new Date().toISOString().slice(0,7); renderMoves(); };
-  function renderMoves(){ const tbody=document.querySelector('#tblCosts tbody'); tbody.innerHTML='';
-    const month = fltMonth.value; const onlyPaid = document.getElementById('fltOnlyPaid').checked;
-    state.moves.forEach(m=>{ const inMonth = !month || (m.date||'').startsWith(month); if(!inMonth) return; if(onlyPaid && !m.paid) return;
-      const tr=document.createElement('tr'); if(!m.tracked) tr.classList.add('excluded');
-      tr.innerHTML=`<td>${m.kind==='fixed'?'Fixkosten':(m.kind==='income'?'Einnahme':'Ausgabe')}</td><td>${m.label}</td><td>${m.date||''}</td><td>${euro(m.amount)}</td><td>${m.paid?'ja':'nein'}</td>
-        <td><input type="checkbox" ${m.tracked?'checked':''}></td>
-        <td class="right"><button class="ghost edit">Bearbeiten</button><button class="ghost del" style="color:var(--bad)">Löschen</button></td>`;
-      tr.querySelector('input').onchange=()=>{ m.tracked=!m.tracked; save(); renderKPIs(); drawChart(); tr.classList.toggle('excluded',!m.tracked); };
-      tr.querySelector('.edit').onclick=()=>{ formCost.kind.value=m.kind; formCost.label.value=m.label; formCost.amount.value=m.amount; formCost.date.value=m.date; formCost.paid.checked=m.paid; formCost.id.value=m.id; };
-      tr.querySelector('.del').onclick=()=>{ state.moves=state.moves.filter(x=>x.id!==m.id); save(); renderMoves(); renderKPIs(); drawChart(); };
-      tbody.appendChild(tr);
-    }); }
+  const formCost=document.getElementById('formCost'); formCost.date.value=new Date().toISOString().slice(0,10);
+  formCost.onsubmit=(e)=>{ e.preventDefault(); const f=new FormData(formCost); const rec={ id:f.get('id')||genId(), kind:f.get('kind'), label:f.get('label').trim(), amount:+f.get('amount'), date:f.get('date'), paid:!!f.get('paid'), tracked:true }; const ix=state.moves.findIndex(x=>x.id===rec.id); if(ix>=0) state.moves[ix]=rec; else state.moves.push(rec); save(); formCost.reset(); formCost.date.value=new Date().toISOString().slice(0,10); renderMoves(); renderKPIs(); drawChart(); };
+  const fltMonth=document.getElementById('fltMonth'); fltMonth.value=new Date().toISOString().slice(0,7); document.getElementById('fltOnlyPaid').onchange=renderMoves; document.getElementById('btnClearFilters').onclick=()=>{ document.getElementById('fltOnlyPaid').checked=false; fltMonth.value=new Date().toISOString().slice(0,7); renderMoves(); };
+  function renderMoves(){ const tbody=document.querySelector('#tblCosts tbody'); tbody.innerHTML=''; const month=fltMonth.value; const onlyPaid=document.getElementById('fltOnlyPaid').checked; state.moves.forEach(m=>{ const inMonth=!month || (m.date||'').startsWith(month); if(!inMonth) return; if(onlyPaid && !m.paid) return; const tr=document.createElement('tr'); if(!m.tracked) tr.classList.add('excluded'); tr.innerHTML=`<td>${m.kind==='fixed'?'Fixkosten':(m.kind==='income'?'Einnahme':'Ausgabe')}</td><td>${m.label}</td><td>${m.date||''}</td><td>${euro(m.amount)}</td><td>${m.paid?'ja':'nein'}</td><td><input type="checkbox" ${m.tracked?'checked':''}></td><td class="right"><button class="ghost edit">Bearbeiten</button><button class="ghost del" style="color:var(--bad)">Löschen</button></td>`; tr.querySelector('input').onchange=()=>{ m.tracked=!m.tracked; save(); renderKPIs(); drawChart(); tr.classList.toggle('excluded',!m.tracked); }; tr.querySelector('.edit').onclick=()=>{ formCost.kind.value=m.kind; formCost.label.value=m.label; formCost.amount.value=m.amount; formCost.date.value=m.date; formCost.paid.checked=m.paid; formCost.id.value=m.id; }; tr.querySelector('.del').onclick=()=>{ state.moves=state.moves.filter(x=>x.id!==m.id); save(); renderMoves(); renderKPIs(); drawChart(); }; tbody.appendChild(tr); }); }
 
-  // KPIs
   function totals(){
-    const sum = (arr, pred=()=>true) => arr.filter(pred).reduce((a,b)=>a+(+b.amount||0),0);
-    const t_cash = sum(state.assets, x=>x.tracked && x.type==='cash');
-    const t_sav  = sum(state.assets, x=>x.tracked && x.type==='savings');
-    const t_stk  = sum(state.markets, x=>x.tracked && x.type==='stocks');
-    const t_crp  = sum(state.markets, x=>x.tracked && x.type==='crypto');
-    const month = new Date().toISOString().slice(0,7);
-    const t_costs = sum(state.moves, x=>x.tracked && (x.kind==='expense'||x.kind==='fixed') && (x.date||'').startsWith(month));
-    const t_paid  = sum(state.moves, x=>x.tracked && x.paid && (x.kind!=='income'));
-    return {cash:t_cash,savings:t_sav,stocks:t_stk,crypto:t_crp,total:t_cash+t_sav+t_stk+t_crp,costs:t_costs,paid:t_paid};
-  }
-  function renderKPIs(){ const t = totals();
-    document.getElementById('kpi-total').textContent = euro(t.total);
-    document.getElementById('kpi-cash').textContent = euro(t.cash);
-    document.getElementById('kpi-savings').textContent = euro(t.savings);
-    document.getElementById('kpi-stocks').textContent = euro(t.stocks);
-    document.getElementById('kpi-crypto').textContent = euro(t.crypto);
-    document.getElementById('kpi-costs').textContent = euro(t.costs);
-    document.getElementById('kpi-paid').textContent = euro(t.paid);
-    const m = new Date().toISOString().slice(0,7);
-    const monthSnaps = state.snapshots.filter(s=> new Date(s.ts).toISOString().slice(0,7)===m);
-    const start = monthSnaps.sort((a,b)=>a.ts-b.ts)[0];
-    const base = start? start.totals.total : t.total;
-    const pct = base? ((t.total-base)/base)*100 : 0;
-    document.getElementById('kpi-mtd').textContent = (pct>=0?'+':'')+pct.toFixed(1)+'%';
+    const sum=(arr,p=()=>true)=>arr.filter(p).reduce((a,b)=>a+(+b.amount||0),0);
+    const t_cash=sum(state.assets,x=>x.tracked&&x.type==='cash');
+    const t_sav=sum(state.assets,x=>x.tracked&&x.type==='savings');
+    const t_stk=sum(state.markets,x=>x.tracked&&x.type==='stocks');
+    const t_crp=sum(state.markets,x=>x.tracked&&x.type==='crypto');
+    const month=new Date().toISOString().slice(0,7);
+    const t_exp=sum(state.moves,x=>x.tracked&&x.kind==='expense'&&(x.date||'').startsWith(month));
+    const t_fix=sum(state.moves,x=>x.tracked&&x.kind==='fixed'&&(x.date||'').startsWith(month));
+    const t_paid=sum(state.moves,x=>x.tracked&&x.paid&&(x.kind!=='income'));
+    const t_costs=t_exp+t_fix; // Rückwärtskompatibilität
+    return {cash:t_cash,savings:t_sav,stocks:t_stk,crypto:t_crp,total:t_cash+t_sav+t_stk+t_crp,exp:t_exp,fixed:t_fix,costs:t_costs,paid:t_paid};
   }
 
-  // Chart controls
-  const picks = {total:true,cash:false,savings:false,stocks:false,crypto:false};
-  const colors = { total:'#60a5fa', cash:'#34d399', savings:'#fbbf24', stocks:'#a78bfa', crypto:'#f87171' };
+  function renderKPIs(){
+    const t=totals();
+    document.getElementById('kpi-total').textContent=euro(t.total);
+    document.getElementById('kpi-cash').textContent=euro(t.cash);
+    document.getElementById('kpi-savings').textContent=euro(t.savings);
+    document.getElementById('kpi-stocks').textContent=euro(t.stocks);
+    document.getElementById('kpi-crypto').textContent=euro(t.crypto);
+    document.getElementById('kpi-exp').textContent=euro(t.exp);
+    document.getElementById('kpi-fixed').textContent=euro(t.fixed);
+    document.getElementById('kpi-paid').textContent=euro(t.paid);
+    const m=new Date().toISOString().slice(0,7);
+    const monthSnaps=state.snapshots.filter(s=> new Date(s.ts).toISOString().slice(0,7)===m);
+    const start=monthSnaps.sort((a,b)=>a.ts-b.ts)[0];
+    const base=start? start.totals.total : t.total;
+    const pct=base? ((t.total-base)/base)*100 : 0;
+    document.getElementById('kpi-mtd').textContent=(pct>=0?'+':'')+pct.toFixed(1)+'%';
+  }
+
+  // Chart
+  const picks={total:true,cash:false,savings:false,stocks:false,crypto:false};
+  const colors={total:'#60a5fa',cash:'#34d399',savings:'#fbbf24',stocks:'#a78bfa',crypto:'#f87171'};
   document.querySelectorAll('.kpiPick').forEach(c=>{ c.onchange=()=>{ picks[c.value]=c.checked; drawChart(); renderLegend(); }; });
   document.getElementById('btnAll').onclick=()=>{ Object.keys(picks).forEach(k=>picks[k]=true); syncPickUI(); drawChart(); renderLegend(); };
   document.getElementById('btnNone').onclick=()=>{ Object.keys(picks).forEach(k=>picks[k]=false); syncPickUI(); drawChart(); renderLegend(); };
-  function syncPickUI(){ document.querySelectorAll('.kpiPick').forEach(c=> c.checked = !!picks[c.value]); }
-  function renderLegend(){ const el=document.getElementById('legend'); if(!el) return; el.innerHTML='';
-    Object.entries(colors).forEach(([k,col])=>{ const active=picks[k]; const chip=document.createElement('button'); chip.className='pill'; chip.style.borderColor=col; chip.style.opacity=active?1:.5; chip.style.cursor='pointer'; chip.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${col};margin-right:6px"></span>${({total:'Gesamt',cash:'Geld',savings:'Tagesgeld',stocks:'Aktien',crypto:'Krypto'})[k]}`; chip.onclick=()=>{ picks[k]=!picks[k]; syncPickUI(); drawChart(); renderLegend(); }; el.appendChild(chip); }); }
-
+  function syncPickUI(){ document.querySelectorAll('.kpiPick').forEach(c=> c.checked=!!picks[c.value]); }
+  function renderLegend(){ const el=document.getElementById('legend'); if(!el) return; el.innerHTML=''; Object.entries(colors).forEach(([k,col])=>{ const active=picks[k]; const chip=document.createElement('button'); chip.className='pill'; chip.style.borderColor=col; chip.style.opacity=active?1:.5; chip.style.cursor='pointer'; chip.innerHTML=`<span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${col};margin-right:6px"></span>${({total:'Gesamt',cash:'Geld',savings:'Tagesgeld',stocks:'Aktien',crypto:'Krypto'})[k]}`; chip.onclick=()=>{ picks[k]=!picks[k]; syncPickUI(); drawChart(); renderLegend(); }; el.appendChild(chip); }); }
   document.getElementById('btnSnapshot').onclick=()=>{ state.snapshots.push({ts:Date.now(), totals:totals()}); save(); drawChart(); };
 
   function drawChart(){
-    const el = document.getElementById('chart'); if(!el) return; const dash = document.getElementById('dashboard'); const visible = dash && (dash.style.display === '' || dash.style.display === 'grid'); if(!visible) return;
-    const dpr = window.devicePixelRatio || 1; const w = el.clientWidth || 300; const h = parseInt(getComputedStyle(el).height) || 320; el.width = w * dpr; el.height = h * dpr; const ctx = el.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    const el=document.getElementById('chart'); if(!el) return; const dash=document.getElementById('dashboard'); const visible = dash && (dash.style.display===''||dash.style.display==='grid'); if(!visible) return;
+    const dpr=window.devicePixelRatio||1; const w=el.clientWidth||300; const h=parseInt(getComputedStyle(el).height)||320; el.width=w*dpr; el.height=h*dpr; const ctx=el.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.clearRect(0,0,w,h); ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--panel'); ctx.fillRect(0,0,w,h);
     const snaps=[...state.snapshots]; if(!snaps.length) snaps.push({ts:Date.now(), totals:totals()}); snaps.push({ts:Date.now(), totals:totals()});
-    const byMonth = new Map(); snaps.forEach(s => { const ym = new Date(s.ts).toISOString().slice(0,7); byMonth.set(ym, s); });
+    const byMonth=new Map(); snaps.forEach(s=>{ const ym=new Date(s.ts).toISOString().slice(0,7); byMonth.set(ym,s); });
     const labels=[...byMonth.keys()].sort(); const series={ total:[], cash:[], savings:[], stocks:[], crypto:[] };
     labels.forEach(m=>{ const t=byMonth.get(m).totals; Object.keys(series).forEach(k=>series[k].push(t[k])); });
-    const pad=40; const max = Math.max(1, ...Object.keys(series).flatMap(k => (picks[k] ? series[k] : [0])));
-    const y = v => h - pad - ((v / max) * (h - 2*pad)); const x = i => pad + ( i * ((w - 2*pad) / Math.max(1, labels.length - 1)) );
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.stroke();
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--muted'); ctx.textAlign = 'center'; ctx.font = '12px system-ui'; labels.forEach((lb,i)=> ctx.fillText(lb, x(i), h - 12));
-    function drawLine(vals, col){ ctx.beginPath(); vals.forEach((v,i)=>{ const xx=x(i), yy=y(v); if(i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }); ctx.lineWidth = 2; ctx.strokeStyle = col; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.stroke(); vals.forEach((v,i)=>{ const xx=x(i), yy=y(v); ctx.beginPath(); ctx.arc(xx,yy,3,0,Math.PI*2); ctx.fillStyle=col; ctx.fill(); }); }
+    const pad=40; const max=Math.max(1,...Object.keys(series).flatMap(k=> (picks[k]?series[k]:[0])));
+    const y=v=> h-pad - ((v/max)*(h-2*pad)); const x=i=> pad + ( i*((w-2*pad)/Math.max(1,labels.length-1)) );
+    ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--border'); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(pad,h-pad); ctx.lineTo(w-pad,h-pad); ctx.moveTo(pad,pad); ctx.lineTo(pad,h-pad); ctx.stroke();
+    ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted'); ctx.textAlign='center'; ctx.font='12px system-ui'; labels.forEach((lb,i)=> ctx.fillText(lb,x(i),h-12));
+    function drawLine(vals,col){ ctx.beginPath(); vals.forEach((v,i)=>{ const xx=x(i), yy=y(v); if(i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }); ctx.lineWidth=2; ctx.strokeStyle=col; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.stroke(); vals.forEach((v,i)=>{ const xx=x(i), yy=y(v); ctx.beginPath(); ctx.arc(xx,yy,3,0,Math.PI*2); ctx.fillStyle=col; ctx.fill(); }); }
     Object.entries(series).forEach(([k,vals])=>{ if(!picks[k]) return; drawLine(vals, colors[k]); });
   }
 
   // Export / Import / Wipe
-  document.getElementById('btnExport').onclick=()=>{ const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='bag-finanztracker.json'; a.click(); };
+  document.getElementById('btnExport').onclick=()=>{ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='finanztracker.json'; a.click(); };
   document.getElementById('fileImport').onchange=(e)=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ const obj=JSON.parse(r.result); ['assets','markets','moves','snapshots'].forEach(k=>{ if(Array.isArray(obj[k])) state[k]=obj[k]; }); save(); hydrate(); }catch(err){ alert('Import fehlgeschlagen: '+err.message); } }; r.readAsText(f); };
   document.getElementById('btnWipe').onclick=()=>{ if(confirm('Wirklich ALLES löschen?')){ localStorage.removeItem(SKEY); location.reload(); } };
 
-  function hydrate(){ renderAssets(); renderMarkets(); renderMoves(); renderKPIs(); syncPickUI(); renderLegend(); drawChart(); }
+  function hydrate(){ renderAssets(); renderMarkets(); renderMoves(); renderKPIs(); synchronise(); }
+  function synchronise(){ syncPickUI(); renderLegend(); drawChart(); }
   hydrate();
-  </script>
 
-  <script>
-  // === PWA bootstrap for BAG (Icon, Manifest, Service Worker) ===
+  // --- Selbsttests (nicht ändern) + neue Tests ---
   (function(){
     try{
-      function makeIcon(size){ var c=document.createElement('canvas'); c.width=c.height=size; var x=c.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,size,size); x.fillStyle='#22c55e'; x.textAlign='center'; x.textBaseline='middle'; x.font='bold '+Math.floor(size*0.62)+'px system-ui,-apple-system,Segoe UI,Roboto'; x.fillText('$', size/2, size/2+size*0.04); return c.toDataURL('image/png'); }
-      var icon180 = makeIcon(180), icon192 = makeIcon(192), icon512 = makeIcon(512);
-      var apple=document.createElement('link'); apple.rel='apple-touch-icon'; apple.sizes='180x180'; apple.href=icon180; document.head.appendChild(apple);
-      var manifest={ name:'BAG', short_name:'BAG', start_url:'.', scope:'./', display:'standalone', background_color:'#0f172a', theme_color:'#0f172a', icons:[ {src:icon192, sizes:'192x192', type:'image/png'}, {src:icon512, sizes:'512x512', type:'image/png'} ]};
-      var mBlob=new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
-      var mUrl=URL.createObjectURL(mBlob); var link=document.createElement('link'); link.rel='manifest'; link.href=mUrl; document.head.appendChild(link);
-      if('serviceWorker' in navigator){ var sw = "const C='bag-cache-v1';"+"self.addEventListener('install',e=>self.skipWaiting());"+"self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));"+"self.addEventListener('fetch',e=>{const r=e.request,u=new URL(r.url);"+"if(r.mode==='navigate'){e.respondWith(fetch(r).then(res=>{const c=res.clone();caches.open(C).then(cc=>cc.put(r,c));return res;}).catch(()=>caches.match(r)));}"+"else if(u.origin===location.origin){e.respondWith(caches.match(r).then(hit=>hit||fetch(r).then(res=>{const c=res.clone();caches.open(C).then(cc=>cc.put(r,c));return res;})));}"+"});"; var b=new Blob([sw], {type:'text/javascript'}); var u=URL.createObjectURL(b); navigator.serviceWorker.register(u, {scope:'./'}).catch(err=>console.warn('SW register failed',err)); }
-    }catch(e){ console.warn('PWA bootstrap failed', e); }
+      const backup=JSON.parse(JSON.stringify(state));
+      state.assets=[{id:'a',type:'cash',label:'Kasse',amount:100,tracked:true},{id:'b',type:'savings',label:'TG',amount:50,tracked:true}];
+      state.markets=[{id:'c',type:'stocks',label:'NVDA',amount:25,tracked:true}];
+      state.moves=[
+        {id:'d',kind:'expense',label:'Abo',amount:10,date:new Date().toISOString().slice(0,10),paid:true,tracked:true},
+        {id:'e',kind:'fixed',label:'Miete',amount:5,date:new Date().toISOString().slice(0,10),paid:false,tracked:true}
+      ];
+      const t=totals();
+      console.assert(t.total===175,'Summe 175');
+      console.assert(t.exp===10,'Ausgaben 10');
+      console.assert(t.fixed===5,'Fixkosten 5');
+      console.assert(t.costs===15,'Kosten gesamt 15');
+      // Chart darf nicht werfen
+      drawChart();
+      Object.assign(state,backup);
+    }catch(e){console.warn('SelfTests fehlgeschlagen:',e);}
   })();
+  </script>
+
+  <!-- PWA bootstrap: Icon (grünes $), Manifest & Service Worker -->
+  <script>
+    (function(){
+      try{
+        function makeIcon(size){ var c=document.createElement('canvas'); c.width=c.height=size; var x=c.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,size,size); x.fillStyle='#22c55e'; x.textAlign='center'; x.textBaseline='middle'; x.font='bold '+Math.floor(size*0.62)+'px system-ui,-apple-system,Segoe UI,Roboto'; x.fillText('$', size/2, size/2+size*0.04); return c.toDataURL('image/png'); }
+        var icon180=makeIcon(180), icon192=makeIcon(192), icon512=makeIcon(512);
+        var apple=document.createElement('link'); apple.rel='apple-touch-icon'; apple.sizes='180x180'; apple.href=icon180; document.head.appendChild(apple);
+        var manifest={ name:'BAG', short_name:'BAG', start_url:'.', scope:'./', display:'standalone', background_color:'#0f172a', theme_color:'#0f172a', icons:[ {src:icon192, sizes:'192x192', type:'image/png'}, {src:icon512, sizes:'512x512', type:'image/png'} ]};
+        var mBlob=new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}); var mUrl=URL.createObjectURL(mBlob); var link=document.createElement('link'); link.rel='manifest'; link.href=mUrl; document.head.appendChild(link);
+        if('serviceWorker' in navigator){ var sw="const C='bag-cache-v1';"+"self.addEventListener('install',e=>self.skipWaiting());"+"self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));"+"self.addEventListener('fetch',e=>{const r=e.request,u=new URL(r.url);"+"if(r.mode==='navigate'){e.respondWith(fetch(r).then(res=>{const c=res.clone();caches.open(C).then(cc=>cc.put(r,c));return res;}).catch(()=>caches.match(r)));}"+"else if(u.origin===location.origin){e.respondWith(caches.match(r).then(hit=>hit||fetch(r).then(res=>{const c=res.clone();caches.open(C).then(cc=>cc.put(r,c));return res;})));}"+"});"; var b=new Blob([sw],{type:'text/javascript'}); var u=URL.createObjectURL(b); navigator.serviceWorker.register(u,{scope:'./'}).catch(err=>console.warn('SW register failed',err)); }
+      }catch(e){ console.warn('PWA bootstrap failed', e); }
+    })();
+  </script>
+
+  <!-- Firebase (optional) für Google-Login/Sync) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+  <script>
+    // ===== Firebase (optional) – füge deine eigene Config ein =====
+    const FIREBASE_CONFIG = {
+      apiKey: "PASTE_YOUR_API_KEY",
+      authDomain: "PASTE_YOUR_AUTH_DOMAIN",
+      projectId: "PASTE_YOUR_PROJECT_ID",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
+
+    let fb=null, auth=null, db=null, user=null, autoSync=false;
+    function initFirebase(){
+      if(!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey.startsWith('PASTE')) return false;
+      try{
+        fb = firebase.initializeApp(FIREBASE_CONFIG);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        auth.onAuthStateChanged(u=>{ user=u; document.getElementById('cloudStatus').textContent = u? ('angemeldet: '+(u.displayName||u.email)) : 'offline'; if(u && autoSync) cloudLoad(); });
+        return true;
+      }catch(e){ console.warn('Firebase init fail', e); return false; }
+    }
+    function requireAuth(){ if(!fb && !initFirebase()){ alert('Cloud-Sync ist optional. Bitte Firebase-Config einfügen.'); return false;} if(!user){ alert('Bitte zuerst mit Google anmelden.'); return false;} return true; }
+    async function googleLogin(){ if(!initFirebase()){ alert('Bitte Firebase-Config einfügen.'); return; } const provider = new firebase.auth.GoogleAuthProvider(); await auth.signInWithPopup(provider); }
+    async function googleLogout(){ if(!auth) return; await auth.signOut(); }
+    async function cloudSave(){ if(!requireAuth()) return; const docRef = db.collection('bag-tracker').doc(user.uid); await docRef.set({ state, updated: Date.now() }); alert('In Cloud gespeichert'); }
+    async function cloudLoad(){ if(!requireAuth()) return; const docRef = db.collection('bag-tracker').doc(user.uid); const snap = await docRef.get(); if(snap.exists){ const data=snap.data(); Object.assign(state, data.state||{}); save(); hydrate(); alert('Aus Cloud geladen'); } else { alert('Noch keine Daten in der Cloud'); } }
+
+    // Buttons verbinden
+    document.getElementById('btnLogin').onclick=googleLogin;
+    document.getElementById('btnLogout').onclick=googleLogout;
+    document.getElementById('btnCloudSave').onclick=cloudSave;
+    document.getElementById('btnCloudLoad').onclick=cloudLoad;
+    document.getElementById('autoSyncToggle').onchange=(e)=>{ autoSync=e.target.checked; if(autoSync && user) cloudLoad(); };
   </script>
 </body>
 </html>
