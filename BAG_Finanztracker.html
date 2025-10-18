@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>BAG – Finanztracker</title>
+</head>
+<body>
+  <h2>BAG – Finanztracker</h2>
+  <p>Diese App läuft auf deinem iPhone – öffne sie über die Dateien‑App oder lade sie auf GitHub Pages hoch und füge sie zum Home‑Bildschirm hinzu.</p>
+
+  <script>
+  (function(){
+    try {
+      function makeIcon(size){
+        var c=document.createElement('canvas'); c.width=c.height=size; var x=c.getContext('2d');
+        x.fillStyle='#000'; x.fillRect(0,0,size,size);
+        x.fillStyle='#22c55e'; x.textAlign='center'; x.textBaseline='middle';
+        x.font='bold '+Math.floor(size*0.62)+'px system-ui,-apple-system,Segoe UI,Roboto';
+        x.fillText('$', size/2, size/2+size*0.04);
+        return c.toDataURL('image/png');
+      }
+      var icon180 = makeIcon(180), icon192 = makeIcon(192), icon512 = makeIcon(512);
+      var apple=document.createElement('link'); apple.rel='apple-touch-icon'; apple.sizes='180x180'; apple.href=icon180; document.head.appendChild(apple);
+      var manifest={ name:'BAG', short_name:'BAG', start_url:'.', scope:'./', display:'standalone', background_color:'#0f172a', theme_color:'#0f172a', icons:[ {src:icon192, sizes:'192x192', type:'image/png'}, {src:icon512, sizes:'512x512', type:'image/png'} ]};
+      var mBlob=new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+      var mUrl=URL.createObjectURL(mBlob);
+      var link=document.createElement('link'); link.rel='manifest'; link.href=mUrl; document.head.appendChild(link);
+      if('serviceWorker' in navigator){
+        var sw = "const C='bag-cache-v1';"+
+                 "self.addEventListener('install',e=>self.skipWaiting());"+
+                 "self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));"+
+                 "self.addEventListener('fetch',e=>{const r=e.request,u=new URL(r.url);"+
+                 "if(r.mode==='navigate'){e.respondWith(fetch(r).then(res=>{const c=res.clone();caches.open(C).then(cc=>cc.put(r,c));return res;}).catch(()=>caches.match(r)));}"+
+                 "else if(u.origin===location.origin){e.respondWith(caches.match(r).then(hit=>hit||fetch(r).then(res=>{const c=res.clone();caches.open(C).then(cc=>cc.put(r,c));return res;})));}"+
+                 "});";
+        var b=new Blob([sw], {type:'text/javascript'});
+        var u=URL.createObjectURL(b);
+        navigator.serviceWorker.register(u, {scope:'./'}).catch(err=>console.warn('SW register failed',err));
+      }
+    } catch(e){ console.warn('PWA bootstrap failed', e); }
+  })();
+  </script>
+</body>
+</html>
