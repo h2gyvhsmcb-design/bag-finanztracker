@@ -376,5 +376,43 @@
     document.getElementById('btnCloudLoad').onclick=cloudLoad;
     document.getElementById('autoSyncToggle').onchange=(e)=>{ autoSync=e.target.checked; if(autoSync && user) cloudLoad(); };
   </script>
+  <!-- Firebase + Firestore Setup -->
+<script type="module">
+  // Import Firebase Core
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  // Dein Firebase Config (aus deiner Console)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAUoQ8ut7vsrsB8WiXweqBh6hBoRdxohwc",
+    authDomain: "finanztracker-ef227.firebaseapp.com",
+    projectId: "finanztracker-ef227",
+    storageBucket: "finanztracker-ef227.firebasestorage.app",
+    messagingSenderId: "892331460021",
+    appId: "1:892331460021:web:35f3abddbad64a909985fc",
+    measurementId: "G-8X9W9Z8RFM"
+  };
+
+  // Firebase initialisieren
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+
+  // Test: Einmal Daten anlegen, um Verbindung zu prüfen
+  async function testFirestore() {
+    try {
+      await setDoc(doc(db, "test", "verbindung"), {
+        status: "erfolgreich",
+        timestamp: new Date().toISOString()
+      });
+      console.log("✅ Firestore-Verbindung funktioniert!");
+    } catch (e) {
+      console.error("❌ Fehler beim Firestore-Test:", e);
+    }
+  }
+  testFirestore();
+</script>
+
 </body>
 </html>
